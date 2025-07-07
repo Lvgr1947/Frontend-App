@@ -37,9 +37,3 @@ spec:
               port: 80
             initialDelaySeconds: 3
             periodSeconds: 5
-          env:
-            - name: API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: ssm-secret
-                  key: API_KEY
