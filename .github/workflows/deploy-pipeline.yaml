@@ -55,6 +55,17 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+        
+      - name: Configure AWS Credentials
+        run: |
+          echo "Getting API_KEY from SSM..."
+          VALUE=$(aws ssm get-parameter --name "/frontend/API_KEY" --with-decryption --region ap-south-1 --query "Parameter.Value" --output text)
+          echo "API_KEY=$VALUE" >> $GITHUB_ENV
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+          
       - name: Decode kubeconfig
         run: |
           echo "${{ secrets.KUBECONFIG_BASE64 }}" | base64 -d > kubeconfig
@@ -81,6 +92,16 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Configure AWS Credentials
+        run: |
+          echo "Getting API_KEY from SSM..."
+          VALUE=$(aws ssm get-parameter --name "/frontend/API_KEY" --with-decryption --region ap-south-1 --query "Parameter.Value" --output text)
+          echo "API_KEY=$VALUE" >> $GITHUB_ENV
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+          
       - name: Decode kubeconfig
         run: |
           echo "${{ secrets.KUBECONFIG_BASE64 }}" | base64 -d > kubeconfig
