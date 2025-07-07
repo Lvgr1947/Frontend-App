@@ -39,6 +39,8 @@ spec:
             periodSeconds: 5
           env:
             - name: API_KEY
+
+---
               valueFrom:
                 secretKeyRef:
                   name: ssm-secret
