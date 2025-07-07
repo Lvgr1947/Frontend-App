@@ -70,6 +70,7 @@ jobs:
             git clone https://github.com/${{ github.repository }}.git
             cd Frontend-App
             kubectl apply -f k8s/staging/
+            kubectl apply -f k8s/monitoring/
             
 
   # deploy_production:
@@ -108,50 +109,3 @@ jobs:
 #           kubectl apply -f k8s/production/
 #         env:
 #           KUBECONFIG: kubeconfig
-  setup_monitoring:
-    name: Install Monitoring via SSH
-    runs-on: self-hosted
-    if: github.ref == 'refs/heads/main'
-  
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-  
-      - name: Deploy Monitoring via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            set -e
-            echo "[INFO] Installing monitoring stack on K3s node..."
-
-            if ! command -v helm &>/dev/null; then
-              echo "[INFO] Helm not found. Installing..."
-              curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-            else
-              echo "[INFO] Helm already installed."
-            fi
-            
-            # 2. Add Prometheus Helm repo and update
-            helm repo add prometheus-community https://prometheus-community.github.io/helm-charts || true
-            helm repo update
-
-            # 3. Install Prometheus + Grafana if not already installed
-            if helm status prometheus -n monitoring >/dev/null 2>&1; then
-              echo "[INFO] Prometheus stack already installed in 'monitoring' namespace."
-            else
-              echo "[INFO] Installing Prometheus stack..."
-              helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
-                --namespace monitoring --create-namespace \
-                --version 56.6.0 \
-                --wait
-            fi
-
-            # 4. Apply ingress from the repo
-            echo "[INFO] Applying monitoring ingress..."
-            rm -rf Frontend-App || true
-            git clone https://github.com/${{ github.repository }}.git
-            cd Frontend-App
-            kubectl apply -f k8s/monitoring/
