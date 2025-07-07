@@ -55,6 +55,7 @@ jobs:
     name:  Deploy to Staging
     runs-on: self-hosted
     needs: build
+    environment: staging
     if: github.ref == 'refs/heads/develop'
 
     steps:
@@ -92,6 +93,7 @@ jobs:
     name: Deploy to Production
     runs-on: self-hosted
     needs: build
+    environment: production
     if: github.ref == 'refs/heads/main'
 
     steps:
