@@ -56,35 +56,20 @@ jobs:
     if: github.ref == 'refs/heads/main'
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-        
-      - name: Configure AWS Credentials
-        run: |
-          echo "Getting API_KEY from SSM..."
-          VALUE=$(aws ssm get-parameter --name "/frontend/API_KEY" --with-decryption --region ap-south-1 --query "Parameter.Value" --output text)
-          echo "API_KEY=$VALUE" >> $GITHUB_ENV
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-          
-      - name: Decode kubeconfig
-        run: |
-          echo "${{ secrets.KUBECONFIG_BASE64 }}" | base64 -d > kubeconfig
-          chmod 600 kubeconfig
-
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
+      - name: Deploy to Staging via SSH
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          version: 'v1.29.0'
-
-      - name: Deploy Staging Manifests
-        run: |
-          kubectl apply -f k8s/staging/
-        env:
-          KUBECONFIG: kubeconfig
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            rm -rf Frontend-App || true
+            git clone https://github.com/${{ github.repository }}.git
+            cd Frontend-App
+            kubectl apply -f k8s/staging/
 
   deploy_production:
     name: Deploy to Production
