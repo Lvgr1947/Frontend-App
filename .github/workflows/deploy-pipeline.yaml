@@ -9,23 +9,26 @@ on:
     - '.github/workflows/**'
 
 jobs:
-  validate:
-    name: Validate YAML
+  validate-yaml:
+    name: Lint & Validate K8s YAML
     runs-on: self-hosted
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: YAML Linting
+      - name: Install kubeconform
         run: |
-          echo "Linting YAML files..."
-          yamllint k8s/
+          curl -L https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz | tar xz
+          sudo mv kubeconform /usr/local/bin/
+
+      - name: Validate all K8s YAMLs
+        run: kubeconform -strict -summary -output json -ignore-missing-schemas -verbose k8s/
 
   build:
     name: Build & Push Docker Image
     runs-on: self-hosted
-    needs: validate
+    needs: validate-yaml
 
     steps:
       - name: Checkout Code
