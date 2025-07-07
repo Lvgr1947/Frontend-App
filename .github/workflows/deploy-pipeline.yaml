@@ -66,10 +66,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            rm -rf Frontend-App || true
-            git clone https://github.com/${{ github.repository }}.git
-            cd Frontend-App
-            kubectl apply -f k8s/staging/
+            kubectl apply -f ~/k8s/staging/
+
 
   # deploy_production:
 #     name: Deploy to Production
