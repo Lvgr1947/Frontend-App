@@ -111,7 +111,6 @@ jobs:
   setup_monitoring:
     name: Install Monitoring via SSH
     runs-on: self-hosted
-    environment: staging
     if: github.ref == 'refs/heads/main'
   
     steps:
