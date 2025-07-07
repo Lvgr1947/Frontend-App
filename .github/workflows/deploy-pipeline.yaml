@@ -70,7 +70,7 @@ jobs:
             git clone https://github.com/${{ github.repository }}.git
             cd Frontend-App
             kubectl apply -f k8s/staging/
-
+            
 
   # deploy_production:
 #     name: Deploy to Production
@@ -109,46 +109,50 @@ jobs:
 #         env:
 #           KUBECONFIG: kubeconfig
   setup_monitoring:
-      name: Install Prometheus + Grafana (via Helm)
-      runs-on: self-hosted
-      environment: staging
-      if: github.ref == 'refs/heads/main'
+    name: Install Monitoring via SSH
+    runs-on: self-hosted
+    environment: staging
+    if: github.ref == 'refs/heads/main'
   
-      steps:
-        - name: Checkout Code
-          uses: actions/checkout@v3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
   
-        - name: Install Helm (if not already installed)
-          run: |
+      - name: Deploy Monitoring via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+            echo "[INFO] Installing monitoring stack on K3s node..."
+
             if ! command -v helm &>/dev/null; then
-              echo "Installing Helm..."
+              echo "[INFO] Helm not found. Installing..."
               curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
             else
-              echo "Helm already installed"
+              echo "[INFO] Helm already installed."
             fi
-  
-        - name: Add Prometheus Helm Repo
-          run: |
-            helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+            
+            # 2. Add Prometheus Helm repo and update
+            helm repo add prometheus-community https://prometheus-community.github.io/helm-charts || true
             helm repo update
-  
-        - name: Check if Prometheus already installed
-          id: check
-          run: |
+
+            # 3. Install Prometheus + Grafana if not already installed
             if helm status prometheus -n monitoring >/dev/null 2>&1; then
-              echo "prometheus_installed=true" >> $GITHUB_OUTPUT
+              echo "[INFO] Prometheus stack already installed in 'monitoring' namespace."
             else
-              echo "prometheus_installed=false" >> $GITHUB_OUTPUT
+              echo "[INFO] Installing Prometheus stack..."
+              helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
+                --namespace monitoring --create-namespace \
+                --version 56.6.0 \
+                --wait
             fi
-  
-        - name: Install Prometheus Stack
-          if: steps.check.outputs.prometheus_installed == 'false'
-          run: |
-            helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
-              --namespace monitoring --create-namespace \
-              --version 56.6.0 \
-              --wait
-  
-        - name: Apply Monitoring Ingress
-          run: |
-            kubectl apply -f k8s/monitoring/monitoring-ingress.yaml
+
+            # 4. Apply ingress from the repo
+            echo "[INFO] Applying monitoring ingress..."
+            rm -rf Frontend-App || true
+            git clone https://github.com/${{ github.repository }}.git
+            cd Frontend-App
+            kubectl apply -f k8s/monitoring/
