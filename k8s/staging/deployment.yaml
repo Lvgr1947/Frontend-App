@@ -43,3 +43,4 @@ spec:
                 secretKeyRef:
                   name: ssm-secret
                   key: API_KEY
+---
