@@ -11,8 +11,8 @@ spec:
     - host: venudev.duckdns.org
       http:
         paths:
-          - path: /staging(/|$)(.*)
-            pathType: ImplementationSpecific
+          - path: /staging
+            pathType: Prefix
             backend:
               service:
                 name: frontend-service
