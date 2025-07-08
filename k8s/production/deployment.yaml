@@ -15,7 +15,6 @@ spec:
       labels:
         app: frontend-app
     spec:
-      serviceAccountName: frontend-app-sa
       containers:
         - name: frontend-app
           image: lvgr1947/frontend-app:production
@@ -40,7 +39,4 @@ spec:
               port: 80
             initialDelaySeconds: 3
             periodSeconds: 5
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            readOnlyRootFilesystem: true
+  
