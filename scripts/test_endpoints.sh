@@ -11,9 +11,9 @@ if [ -z "$BASE_URL" ]; then
   exit 1
 fi
 
-echo "🔍 Testing app endpoints on http://$BASE_URL"
+echo "🔍 Testing app endpoints on https://$BASE_URL"
 
-Nodeport = "30756"
+Nodeport="30756"
 
 for endpoint in "${ENDPOINTS[@]}"; do
   echo "➡️  Checking $endpoint..."
