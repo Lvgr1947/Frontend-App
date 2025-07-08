@@ -1,0 +1,25 @@
+
+
+
+# apiVersion: monitoring.coreos.com/v1
+# kind: PrometheusRule
+# metadata:
+#   name: frontend-cpu-alert
+#   namespace: prod
+#   labels:
+#     prometheus: k8s
+#     role: alert-rules
+# spec:
+#   groups:
+#     - name: frontend.rules
+#       rules:
+#         - alert: HighCPUUsage
+#           expr: >-
+#             sum(rate(container_cpu_usage_seconds_total{namespace="prod", pod=~"frontend-app.*"}[2m]))
+#             > 0.8
+#           for: 2m
+#           labels:
+#             severity: warning
+#           annotations:
+#             summary: "High CPU usage on frontend-app pods"
+#             description: "CPU usage has been over 80% for more than 2 minutes."
