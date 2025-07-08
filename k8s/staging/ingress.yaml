@@ -6,12 +6,13 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-staging
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
         - venudev.duckdns.org
-      secretName: frontend-tls
+      secretName: venudev-tls
   rules:
     - host: venudev.duckdns.org
       http:
