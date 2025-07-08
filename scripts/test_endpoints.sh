@@ -13,14 +13,11 @@ fi
 
 echo "🔍 Testing app endpoints on http://$BASE_URL"
 
-# List of endpoints to check
-ENDPOINTS=(
-  "/staging"
-)
+Nodeport = "30756"
 
 for endpoint in "${ENDPOINTS[@]}"; do
   echo "➡️  Checking $endpoint..."
-  curl -sSf "http://$BASE_URL$endpoint" > /dev/null
+  curl -sSf "https://$BASE_URL$Nodeport" > /dev/null
   echo "✅ $endpoint OK"
 done
 
