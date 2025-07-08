@@ -45,10 +45,10 @@ jobs:
       - name: Run HTML Linter
         run: |
           echo "Linting staging/index.html"
-          tidy -qe staging/index.html || true
+          tidy -qe staging/index.html
           
-          echo "Linting prod/index.html"
-          tidy -qe prod/index.html || true
+          echo "Linting production/index.html"
+          tidy -qe production/index.html
 
           
   build:
@@ -80,7 +80,7 @@ jobs:
   deploy_staging:
     name:  Deploy to Staging
     runs-on: self-hosted
-    #needs: build
+    needs: ["build","lint"]
     environment: staging
     if: github.ref == 'refs/heads/main'
 
