@@ -18,7 +18,7 @@ spec:
       serviceAccountName: frontend-app-sa
       containers:
         - name: frontend-app
-          image: lvgr1947/frontend-app:prod
+          image: lvgr1947/frontend-app:production
           ports:
             - containerPort: 80
           resources:
