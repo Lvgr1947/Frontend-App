@@ -13,50 +13,49 @@ env:
   IMAGE_NAME: lvgr1947/frontend-app
   
 jobs:
-  # validate-yaml:
-#     name: Lint & Validate K8s YAML
-#     runs-on: self-hosted
+  validate-yaml:
+    name: Lint & Validate K8s YAML
+    runs-on: self-hosted
 
-#     steps:
-#       - name: Checkout Code
-#         uses: actions/checkout@v3
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-#       - name: Install kubeconform
-#         run: |
-#           curl -L https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz | tar xz
-#           sudo mv kubeconform /usr/local/bin/
+      - name: Install kubeconform
+        run: |
+          curl -L https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz | tar xz
+          sudo mv kubeconform /usr/local/bin/
 
-#       - name: Validate all K8s YAMLs
-#         run: kubeconform -strict -summary -output json -ignore-missing-schemas -verbose k8s/
+      - name: Validate all K8s YAMLs
+        run: kubeconform -strict -summary -output json -ignore-missing-schemas -verbose k8s/
 
 
-#   lint:
-#     name: Lint HTML Files
-#     runs-on: ubuntu-latest
-#     defaults:
-#       run:
-#         working-directory: app/frontend
+  lint:
+    name: Lint HTML Files
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app/frontend
 
-#     steps:
-#       - name: Checkout Code
-#         uses: actions/checkout@v3
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-#       - name: Install tidy
-#         run: sudo apt-get update && sudo apt-get install -y tidy
+      - name: Install tidy
+        run: sudo apt-get update && sudo apt-get install -y tidy
 
-#       - name: Run HTML Linter
-#         run: |
-#           echo "Linting staging/index.html"
-#           tidy -qe staging/index.html
+      - name: Run HTML Linter
+        run: |
+          echo "Linting staging/index.html"
+          tidy -qe staging/index.html
           
-#           echo "Linting production/index.html"
-#           tidy -qe production/index.html
-
+          echo "Linting production/index.html"
+          tidy -qe production/index.html
           
   build:
     name: Build & Push Docker Image
     runs-on: ubuntu-latest
-    #needs: validate-yaml
+    needs: ["validate-yaml","lint"]
     strategy:
       matrix:
         environment: [staging, production]
@@ -81,43 +80,43 @@ jobs:
 
 
         
-  # deploy_staging:
-  #   name:  Deploy to Staging
-  #   runs-on: self-hosted
-  #   #needs: ["build","lint"]
-  #   environment: staging
-  #   if: github.ref == 'refs/heads/main'
+  deploy_staging:
+    name:  Deploy to Staging
+    runs-on: self-hosted
+    needs: ["build"]
+    environment: staging
+    if: github.ref == 'refs/heads/main'
 
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-  #     - name: Deploy to Staging via SSH
-  #       uses: appleboy/ssh-action@v1.0.3
-  #       with:
-  #         host: ${{ secrets.EC2_HOST }}
-  #         username: ubuntu
-  #         key: ${{ secrets.EC2_SSH_KEY }}
-  #         script: |
-  #           rm -rf Frontend-App || true
-  #           git clone https://github.com/${{ github.repository }}.git
-  #           cd Frontend-App
-  #           kubectl apply -f k8s/staging/
-  #           kubectl apply -f k8s/monitoring/
+      - name: Deploy to Staging via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            rm -rf Frontend-App || true
+            git clone https://github.com/${{ github.repository }}.git
+            cd Frontend-App
+            kubectl apply -f k8s/staging/
+            kubectl apply -f k8s/monitoring/
             
-  # integration_tests:
-  #   name: Integration & E2E Tests on Staging
-  #   runs-on: ubuntu-latest
-  #   needs: deploy_staging
+  integration_tests:
+    name: Integration & E2E Tests on Staging
+    runs-on: ubuntu-latest
+    needs: deploy_staging
 
-  #   steps:
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v3
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-  #     - name: Run Health Checks on Staging App
-  #       run: |
-  #         chmod +x scripts/test_endpoints.sh
-  #         ./scripts/test_endpoints.sh ${{ secrets.STAGING_APP_URL }}
+      - name: Run Health Checks on Staging App
+        run: |
+          chmod +x scripts/test_endpoints.sh
+          ./scripts/test_endpoints.sh ${{ secrets.STAGING_APP_URL }}
 
 
 
@@ -125,7 +124,7 @@ jobs:
   deploy_production:
     name:  Deploy to Production
     runs-on: self-hosted
-    #needs: ["build","lint"]
+    needs: ["integration_tests"]
     environment: production
     if: github.ref == 'refs/heads/main'
 
