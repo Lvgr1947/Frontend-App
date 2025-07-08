@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: frontend-app
-          image: lvgr1947/frontend-app:latest
+          image: lvgr1947/frontend-app:staging
           ports:
             - containerPort: 80
           resources:
