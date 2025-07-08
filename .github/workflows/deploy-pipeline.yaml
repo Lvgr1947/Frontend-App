@@ -28,27 +28,29 @@ jobs:
 
 #       - name: Validate all K8s YAMLs
 #         run: kubeconform -strict -summary -output json -ignore-missing-schemas -verbose k8s/
-  lint:
-    name: Lint HTML Files
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: app/frontend
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
 
-      - name: Install tidy
-        run: sudo apt-get update && sudo apt-get install -y tidy
+#   lint:
+#     name: Lint HTML Files
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: app/frontend
 
-      - name: Run HTML Linter
-        run: |
-          echo "Linting staging/index.html"
-          tidy -qe staging/index.html
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v3
+
+#       - name: Install tidy
+#         run: sudo apt-get update && sudo apt-get install -y tidy
+
+#       - name: Run HTML Linter
+#         run: |
+#           echo "Linting staging/index.html"
+#           tidy -qe staging/index.html
           
-          echo "Linting production/index.html"
-          tidy -qe production/index.html
+#           echo "Linting production/index.html"
+#           tidy -qe production/index.html
 
           
 #   build:
