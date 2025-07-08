@@ -8,8 +8,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: venudev.duckdns.org
-      http:
+    - http:
         paths:
           - path: /staging
             pathType: Prefix
