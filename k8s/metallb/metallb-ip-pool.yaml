@@ -1,0 +1,14 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: ec2-pool
+  namespace: metallb-system
+spec:
+  addresses:
+    - 172.31.14.160/29
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: ec2-adv
+  namespace: metallb-system
