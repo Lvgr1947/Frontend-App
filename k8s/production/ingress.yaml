@@ -9,9 +9,9 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/limit-rps: "10"
-    nginx.ingress.kubernetes.io/server-snippet: |
-      add_header X-Content-Type-Options nosniff;
-      add_header X-Frame-Options DENY;
+    #nginx.ingress.kubernetes.io/server-snippet: |
+     # add_header X-Content-Type-Options nosniff;
+      #add_header X-Frame-Options DENY;
 spec:
   ingressClassName: nginx
   tls:
