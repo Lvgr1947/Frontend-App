@@ -1,6 +1,6 @@
 # Frontend App – DevOps CI/CD & Infrastructure Setup
 
-This repository presents a **production-grade DevOps solution** for deploying a simple static frontend login application using a full CI/CD workflow, infrastructure as code, Kubernetes orchestration, and monitoring. It is designed to meet the expectations of a mid-level DevOps Engineer role (4–6 years experience), especially for cloud-native deployment practices.
+This repository presents a **DevOps solution** for deploying a simple static frontend login application using a full CI/CD workflow, infrastructure as code, Kubernetes orchestration, and monitoring.
 
 ---
 
@@ -125,6 +125,7 @@ The following routes are set up using `Ingress` and TLS managed via cert-manager
 * `https://venudev.duckdns.org/staging` → Staging Environment
 * `https://venudev.duckdns.org/` → Production Environment
 * `https://venudev.duckdns.org/grafana` → Grafana (Monitoring)
+* `https://venudev.duckdns.org/prometheus` → Prometheus (Monitoring)
 
 TLS certs are issued via Let's Encrypt using appropriate annotations.
 
@@ -156,32 +157,13 @@ TLS certs are issued via Let's Encrypt using appropriate annotations.
 
 **Loom Video Link:** *To be added after recording*
 
-### What to Cover:
-
-* Folder structure walkthrough
-* Terraform setup and apply
-* GitHub Actions pipeline stages
-* EC2 access and K3s cluster confirmation
-* Kubectl views of namespaces
-* Staging vs Production deployments
-* Grafana/Prometheus interface (via Ingress)
-* Application demo: Login UI
 
 ---
 
 ## Author
 
 **Venu Gopal**
-DevOps Engineer (4+ years) – Based in India
-Targeting Dubai Role @ Cybersapient
-Skilled in CI/CD, Kubernetes, Cloud Infra
+DevOps Engineer
 
 ---
 
-## Submission Summary
-
-* ✅ Meets all core and bonus requirements for the assessment
-* ✅ Architecture, pipelines, monitoring, infra all completed
-* ✅ Ideal for scalable DevOps setup at SME/startup scale
-
----
