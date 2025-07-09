@@ -2,6 +2,8 @@ name: Frontend CI/CD Pipeline
 
 on:
   push:
+    paths-ignore:
+      - 'README.md'
     branches:
       - main
       - develop
