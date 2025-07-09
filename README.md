@@ -19,6 +19,56 @@ This repository presents a **DevOps solution** for deploying a simple static fro
 
 ---
 
+## High-Level Infrastructure Overview
+
+```
+                                 ┌────────────────────────────┐
+                                 │        GitHub Repo         │
+                                 │  (Code + Workflows + YAML) │
+                                 └────────────┬───────────────┘
+                                              │ GitHub Actions
+                            ┌─────────────────▼────────────────┐
+                            │       Self-hosted EC2 Runner     │
+                            │      (t3.xlarge - Terraform)     │
+                            └────────────┬────────────┬────────┘
+                                         │            │
+              ┌──────────────────────────▼─┐      ┌────▼────────────────┐
+              │      K3s Kubernetes Node   │      │      Docker Hub     │
+              │     (Deployed via SSH)     │      │  Image Registry     │
+              └────────────┬───────────────┘      └─────────────────────┘
+                           │
+      ┌────────────────────┼────────────────────┐
+      │                    │                    │
+┌─────▼─────┐      ┌───────▼──────┐     ┌───────▼───────┐
+│ Staging NS│      │ Production NS│     │ Monitoring NS │
+└────┬──────┘      └───────┬──────┘     └───────┬───────┘
+     │                      │                      │
+┌────▼─────┐         ┌──────▼────┐          ┌─────▼──────┐
+│App Deploy│         │App Deploy │          │ Prometheus │
+│+Service  │         │+Service   │          │  Grafana   │
+└──────────┘         └───────────┘          └────────────┘
+     │                      │                      │
+     └────Ingress + TLS─────┴────────Ingress───────┘
+               venudev.duckdns.org
+
+```
+
+## CI/CD Pipeline Flow
+
+```
+[Code Push] --> GitHub Actions
+                 |
+                 ├── Lint HTML + K8s YAML
+                 ├── Build Docker Image (staging/production)
+                 ├── Push to Docker Hub
+                 ├── Deploy to EC2 via SSH
+                 │     ├── kubectl apply -f k8s/staging/
+                 │     ├── kubectl apply -f k8s/production/
+                 │     └── kubectl apply -f k8s/monitoring/
+                 └── Integration Tests on Staging
+
+```
+
 ## Folder Structure
 
 ```
