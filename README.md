@@ -206,6 +206,7 @@ TLS certs are issued via Let's Encrypt using appropriate annotations.
 ## Loom Walkthrough
 
 **Loom Video Link:** 
+
 Complete Project Video: https://www.loom.com/share/1de652d98db94287993994ced715a10a?sid=59078aa0-759b-45f5-b9a8-e2a4776877ab
 CI-CD Workflow Video: https://www.loom.com/share/1330127d1b294b569e59d58868827bd4?sid=16ea7159-c12a-4002-a2c2-ebee8e790549
 
@@ -214,7 +215,8 @@ CI-CD Workflow Video: https://www.loom.com/share/1330127d1b294b569e59d58868827bd
 
 ## Author
 
-**Venu Gopal**
+**Venu Gopal Rao Lagineni**
+
 DevOps Engineer
 
 ---
