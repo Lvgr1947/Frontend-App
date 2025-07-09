@@ -70,7 +70,7 @@ jobs:
         run: |
           docker build \
             --build-arg ENV=${{ matrix.environment }} \
-            -t lvgr1947/frontend-app:${{ matrix.environment }} \
+            -t ${{ env.IMAGE_NAME }}:${{ matrix.environment }} \
             app/frontend
         #working-directory: app/frontend
         
